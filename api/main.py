@@ -75,7 +75,7 @@ class handler(BaseHTTPRequestHandler):
             "auth_provider_x509_cert_url": os.environ.get("auth_provider_x509_cert_url"),
             "client_x509_cert_url": os.environ.get("client_x509_cert_url")
         }
-        #print(service_account_credentials)
+        print(service_account_credentials["private_key"])
         credentials = service_account.Credentials.from_service_account_info(
             service_account_credentials, scopes=SCOPES)
         service = discovery.build('sheets', 'v4', credentials=credentials)
