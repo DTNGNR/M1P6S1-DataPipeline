@@ -80,22 +80,22 @@ class handler(BaseHTTPRequestHandler):
             service_account_credentials, scopes=SCOPES)
         service = discovery.build('sheets', 'v4', credentials=credentials)
 
-        # artists = getFollowedArtists()
-        # update = []
-        # for idx, artist in enumerate(artists):
-        #     albums = getArtistAlbums(artists[artist])
-        #     if albums:
-        #         print("=====================\nNew albums for", artist, artists[artist])
-        #         for idx, album in enumerate(albums):
-        #             update.append([artist,album,albums[album]])
+        artists = getFollowedArtists()
+        update = []
+        for idx, artist in enumerate(artists):
+            albums = getArtistAlbums(artists[artist])
+            if albums:
+                print("=====================\nNew albums for", artist, artists[artist])
+                for idx, album in enumerate(albums):
+                    update.append([artist,album,albums[album]])
 
-        # dict_me = dict(values=update)
+        dict_me = dict(values=update)
 
-        # service.spreadsheets().values().append(
-        #     spreadsheetId=SAMPLE_SPREADSHEET_ID,
-        #     valueInputOption='RAW',
-        #     range=SAMPLE_RANGE_NAME,
-        #     body=dict_me).execute()
+        service.spreadsheets().values().append(
+            spreadsheetId=SAMPLE_SPREADSHEET_ID,
+            valueInputOption='RAW',
+            range=SAMPLE_RANGE_NAME,
+            body=dict_me).execute()
 
         print('Sheet successfully Updated')
         return
