@@ -64,16 +64,16 @@ class handler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
         service_account_credentials = {
-            "type": os.environ.get("TYPE"),
-            "project_id": os.environ.get("PROJECT_ID"),
-            "private_key_id": os.environ.get("PRIVATE_KEY_ID"),
-            "private_key": os.environ.get("PRIVATE_KEY"),
-            "client_email": os.environ.get("CLIENT_EMAIL"),
-            "client_id": os.environ.get("CLIENT_ID"),
-            "auth_uri": os.environ.get("AUTH_URI"),
-            "token_uri": os.environ.get("TOKEN_URI"),
-            "auth_provider_x509_cert_url": os.environ.get("AUTH_PROVIDER"),
-            "client_x509_cert_url": os.environ.get("CLIENT_URL")
+            "type": os.environ.get("type"),
+            "project_id": os.environ.get("project_id"),
+            "private_key_id": os.environ.get("private_key_id"),
+            "private_key": os.environ.get("private_key"),
+            "client_email": os.environ.get("client_email"),
+            "client_id": os.environ.get("client_id"),
+            "auth_uri": os.environ.get("auth_uri"),
+            "token_uri": os.environ.get("token_uri"),
+            "auth_provider_x509_cert_url": os.environ.get("auth_provider"),
+            "client_x509_cert_url": os.environ.get("client_url")
         }
         print(service_account_credentials)
         # credentials = service_account.Credentials.from_service_account_info(
@@ -98,7 +98,6 @@ class handler(BaseHTTPRequestHandler):
         #     body=dict_me).execute()
 
         print('Sheet successfully Updated')
-        print(os.environ.get("CUSTOMER_ID"))
         return
 
 
