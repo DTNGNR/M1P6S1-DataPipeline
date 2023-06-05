@@ -6,7 +6,8 @@ from google.oauth2 import service_account
 from apiclient import discovery
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SAMPLE_SPREADSHEET_ID = '1JOSHfmHUWOorpyoWBn0m0Zacrd3xxy5XZdFZFSUJVvs'
-SAMPLE_RANGE_NAME = 'A1:CC1000'
+SAMPLE_RANGE_NAME = 'A:C'
+
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
@@ -14,6 +15,8 @@ check_date = current_date - timedelta(days=7)
 
 from spotipy.oauth2 import SpotifyOAuth
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=os.environ.get("CUSTOMER_ID"), client_secret=os.environ.get("SECRET_ID"),redirect_uri="http://localhost/",scope="user-follow-read,user-read-recently-played"))
+BASE_URL = os.getenv("BASE_URL")
+REDIRECT_URI = "{}/callback".format(BASE_URL)
 
 def getArtistAlbums(uuid):
     albums = []
