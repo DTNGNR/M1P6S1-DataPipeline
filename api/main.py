@@ -1,4 +1,4 @@
-# from http.server import BaseHTTPRequestHandler
+from http.server import BaseHTTPRequestHandler
 # import spotipy
 # import os
 
@@ -8,7 +8,7 @@
 # SAMPLE_SPREADSHEET_ID = '1JOSHfmHUWOorpyoWBn0m0Zacrd3xxy5XZdFZFSUJVvs'
 # SAMPLE_RANGE_NAME = 'A:C'
 
-print("Hallo Welt")
+
 # from datetime import datetime, timedelta
 # current_date = datetime.now()
 # check_date = current_date - timedelta(days=7)
@@ -57,47 +57,47 @@ print("Hallo Welt")
 #         # break
 #     return unique
 
-# class handler(BaseHTTPRequestHandler):
-#     def do_GET(self):
-#         s = self.path
-#         self.send_response(200)
-#         self.send_header('Content-type', 'text/plain')
-#         self.end_headers()
-#         service_account_credentials = {
-#             "type": os.environ.get("TYPE"),
-#             "project_id": os.environ.get("PROJECT_ID"),
-#             "private_key_id": os.environ.get("PRIVATE_KEY_ID"),
-#             "private_key": os.environ.get("PRIVATE_KEY"),
-#             "client_email": os.environ.get("CLIENT_EMAIL"),
-#             "client_id": os.environ.get("CLIENT_ID"),
-#             "auth_uri": os.environ.get("AUTH_URI"),
-#             "token_uri": os.environ.get("TOKEN_URI"),
-#             "auth_provider_x509_cert_url": os.environ.get("AUTH_PROVIDER"),
-#             "client_x509_cert_url": os.environ.get("CLIENT_URL")
-#         }
-#         credentials = service_account.Credentials.from_service_account_info(
-#             service_account_credentials, scopes=SCOPES)
-#         service = discovery.build('sheets', 'v4', credentials=credentials)
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        s = self.path
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        # service_account_credentials = {
+        #     "type": os.environ.get("TYPE"),
+        #     "project_id": os.environ.get("PROJECT_ID"),
+        #     "private_key_id": os.environ.get("PRIVATE_KEY_ID"),
+        #     "private_key": os.environ.get("PRIVATE_KEY"),
+        #     "client_email": os.environ.get("CLIENT_EMAIL"),
+        #     "client_id": os.environ.get("CLIENT_ID"),
+        #     "auth_uri": os.environ.get("AUTH_URI"),
+        #     "token_uri": os.environ.get("TOKEN_URI"),
+        #     "auth_provider_x509_cert_url": os.environ.get("AUTH_PROVIDER"),
+        #     "client_x509_cert_url": os.environ.get("CLIENT_URL")
+        # }
+        # credentials = service_account.Credentials.from_service_account_info(
+        #     service_account_credentials, scopes=SCOPES)
+        # service = discovery.build('sheets', 'v4', credentials=credentials)
 
-#         artists = getFollowedArtists()
-#         update = []
-#         for idx, artist in enumerate(artists):
-#             albums = getArtistAlbums(artists[artist])
-#             if albums:
-#                 print("=====================\nNew albums for", artist, artists[artist])
-#                 for idx, album in enumerate(albums):
-#                     update.append([artist,album,albums[album]])
+        # artists = getFollowedArtists()
+        # update = []
+        # for idx, artist in enumerate(artists):
+        #     albums = getArtistAlbums(artists[artist])
+        #     if albums:
+        #         print("=====================\nNew albums for", artist, artists[artist])
+        #         for idx, album in enumerate(albums):
+        #             update.append([artist,album,albums[album]])
 
-#         dict_me = dict(values=update)
+        # dict_me = dict(values=update)
 
-#         service.spreadsheets().values().append(
-#             spreadsheetId=SAMPLE_SPREADSHEET_ID,
-#             valueInputOption='RAW',
-#             range=SAMPLE_RANGE_NAME,
-#             body=dict_me).execute()
+        # service.spreadsheets().values().append(
+        #     spreadsheetId=SAMPLE_SPREADSHEET_ID,
+        #     valueInputOption='RAW',
+        #     range=SAMPLE_RANGE_NAME,
+        #     body=dict_me).execute()
  
-#         print('Sheet successfully Updated')
-#         return
+        print('Sheet successfully Updated')
+        return
 
 
 
