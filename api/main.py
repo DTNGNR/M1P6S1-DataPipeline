@@ -70,6 +70,19 @@ class handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
+
+        artists = getFollowedArtists()
+
+        update = []
+        for idx, artist in enumerate(artists):
+            albums = getArtistAlbums(artists[artist])
+            if albums:
+                print("=====================\nNew albums for", artist, artists[artist])
+                for idx, album in enumerate(albums):
+                    update.append([artist,album,albums[album]])
+
+        dict_me = dict(values=update)
+
         service_account_credentials = {
             "type": os.environ.get("type"),
             "project_id": os.environ.get("project_id"),
@@ -86,18 +99,6 @@ class handler(BaseHTTPRequestHandler):
         credentials = service_account.Credentials.from_service_account_info(
             service_account_credentials, scopes=SCOPES)
         service = discovery.build('sheets', 'v4', credentials=credentials)
-
-        artists = getFollowedArtists()
-
-        update = []
-        for idx, artist in enumerate(artists):
-            albums = getArtistAlbums(artists[artist])
-            if albums:
-                print("=====================\nNew albums for", artist, artists[artist])
-                for idx, album in enumerate(albums):
-                    update.append([artist,album,albums[album]])
-
-        dict_me = dict(values=update)
 
         service.spreadsheets().values().append(
             spreadsheetId=SAMPLE_SPREADSHEET_ID,
