@@ -96,8 +96,9 @@ class handler(BaseHTTPRequestHandler):
         #     valueInputOption='RAW',
         #     range=SAMPLE_RANGE_NAME,
         #     body=dict_me).execute()
- 
+
         print('Sheet successfully Updated')
+        print(os.environ.get("CUSTOMER_ID"))
         return
 
 
