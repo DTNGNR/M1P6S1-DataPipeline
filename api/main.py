@@ -2,6 +2,13 @@ from http.server import BaseHTTPRequestHandler
 import spotipy
 import os
 
+# https://stackoverflow.com/questions/75869291/cache-errors-using-spotify-api-in-python-program
+cache_dir = '.cache'
+if not os.path.exists(cache_dir):
+    os.makedirs(cache_dir)
+
+os.chmod(cache_dir, 0o700)
+
 from google.oauth2 import service_account
 from apiclient import discovery
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
