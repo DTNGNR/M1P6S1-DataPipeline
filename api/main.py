@@ -88,6 +88,7 @@ class handler(BaseHTTPRequestHandler):
         service = discovery.build('sheets', 'v4', credentials=credentials)
 
         artists = getFollowedArtists()
+        print(artists)
         update = []
         for idx, artist in enumerate(artists):
             albums = getArtistAlbums(artists[artist])
@@ -95,6 +96,7 @@ class handler(BaseHTTPRequestHandler):
                 print("=====================\nNew albums for", artist, artists[artist])
                 for idx, album in enumerate(albums):
                     update.append([artist,album,albums[album]])
+            break
 
         dict_me = dict(values=update)
 
