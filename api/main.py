@@ -7,7 +7,7 @@ cache_dir = '.cache'
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
-os.chmod(cache_dir, 0o700)
+#os.chmod(cache_dir, 0o700)
 
 from google.oauth2 import service_account
 from apiclient import discovery
