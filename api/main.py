@@ -52,7 +52,7 @@ def getFollowedArtists():
         name = artist['name'].title()
         if name not in unique:
             unique[name] = artist["id"]
-        break
+        # break
     return unique
 
 class handler(BaseHTTPRequestHandler):
