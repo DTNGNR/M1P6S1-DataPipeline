@@ -72,8 +72,8 @@ class handler(BaseHTTPRequestHandler):
             "client_id": os.environ.get("client_id"),
             "auth_uri": os.environ.get("auth_uri"),
             "token_uri": os.environ.get("token_uri"),
-            "auth_provider_x509_cert_url": os.environ.get("auth_provider"),
-            "client_x509_cert_url": os.environ.get("client_url")
+            "auth_provider_x509_cert_url": os.environ.get("auth_provider_x509_cert_url"),
+            "client_x509_cert_url": os.environ.get("client_x509_cert_url")
         }
         print(service_account_credentials)
         credentials = service_account.Credentials.from_service_account_info(
