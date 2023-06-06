@@ -1,9 +1,8 @@
-import logging
 import requests
 import os
 
 from flask import Flask, request, redirect
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from base64 import b64encode
 
 from google.oauth2 import service_account
@@ -16,11 +15,8 @@ from datetime import datetime, timedelta
 current_date = datetime.now()
 check_date = current_date - timedelta(days=7000)
 
-# Set up logging
-logging.basicConfig(level=logging.DEBUG)  # Set the desired logging level
-
 app = Flask(__name__)
-load_dotenv()
+#load_dotenv()
 
 @app.route("/")
 def index():
@@ -44,7 +40,6 @@ def callback():
         for artist in artists:
             name = artist["name"].title()
             id = artist["id"]
-            app.logger.error(f"Get albums for: {name} / {id}")
             albums = getArtistAlbums(access_token, id)
 
             if albums:
@@ -60,7 +55,6 @@ def callback():
     else:
         error = request.args.get("error")
         # Handle the error case appropriately
-        app.logger.error(f"Authorization failed. Error: {request}")
         return f"Authorization failed: {error}"
 
 def updateGoogleSheet(data):
@@ -127,7 +121,6 @@ def getArtistAlbums(access_token, id):
             continue
 
         if release_date >= check_date:
-            app.logger.error("Found new album")
             albums.append(album)
 
     return albums
@@ -144,7 +137,6 @@ def get_access_token(code):
     client_secret = os.getenv("CLIENT_SECRET")
     redirect_uri = os.getenv("REDIRECT_URI")
 
-    app.logger.error(client_id, client_secret, redirect_uri)
     headers = {"Authorization": "Basic {}".format(getAuth())}
 
     token_url = "https://accounts.spotify.com/api/token"
@@ -155,7 +147,6 @@ def get_access_token(code):
         "client_id": client_id,
         "client_secret": client_secret,
     }
-    app.logger.error(token_url, data)
     response = requests.post(token_url, data=data, headers=headers)
     response_data = response.json()
     return response_data["access_token"]
@@ -168,6 +159,6 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
         app.run(port=8000, debug=True)
-        
+
         print('Sheet successfully Updated')
         return
