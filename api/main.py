@@ -13,7 +13,7 @@ SAMPLE_RANGE_NAME = 'A:C'
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
-check_date = current_date - timedelta(days=8)
+check_date = current_date - timedelta(days=14)
 
 def updateGoogleSheet(data):
     dict_me = dict(values=data)
