@@ -126,7 +126,7 @@ def getArtistAlbums(access_token, id):
 
     return albums
     
-def getAuth():
+def getAuthorization():
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
     return b64encode(f"{client_id}:{client_secret}".encode()).decode(
@@ -138,7 +138,7 @@ def get_access_token(code):
     client_secret = os.getenv("CLIENT_SECRET")
     redirect_uri = os.getenv("REDIRECT_URI")
 
-    headers = {"Authorization": "Basic {}".format(getAuth())}
+    headers = {"Authorization": "Basic {}".format(getAuthorization())}
 
     token_url = "https://accounts.spotify.com/api/token"
     data = {
@@ -152,17 +152,17 @@ def get_access_token(code):
     response_data = response.json()
     return response_data["access_token"]
 
-class handler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        s = self.path
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
-        self.end_headers()
+# class handler(BaseHTTPRequestHandler):
+#     def do_GET(self):
+#         s = self.path
+#         self.send_response(200)
+#         self.send_header('Content-type', 'text/plain')
+#         self.end_headers()
 
-        # app.run(port=8000, debug=True)
+#         # app.run(port=8000, debug=True)
 
-        print('Sheet successfully updated')
-        return
+#         print('Sheet successfully updated')
+#         return
     
 if __name__ == "__main__":
     print('Run Flask App')
