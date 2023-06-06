@@ -13,7 +13,7 @@ SAMPLE_SPREADSHEET_ID = '1JOSHfmHUWOorpyoWBn0m0Zacrd3xxy5XZdFZFSUJVvs'
 SAMPLE_RANGE_NAME = 'A:C'
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
