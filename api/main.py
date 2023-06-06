@@ -1,9 +1,7 @@
-#from http.server import BaseHTTPRequestHandler
 import requests
 import os
 
 from flask import Flask, request, redirect
-#from dotenv import load_dotenv
 from base64 import b64encode
 
 from google.oauth2 import service_account
@@ -35,9 +33,6 @@ def updateGoogleSheet(data):
     credentials = service_account.Credentials.from_service_account_info(
         service_account_credentials, scopes=SCOPES)
     
-    # credentials = service_account.Credentials.from_service_account_file(
-    #     "spotify-new-releases-388907-3a50d5a91da5.json", scopes=SCOPES)
-
     service = discovery.build('sheets', 'v4', credentials=credentials)
 
     service.spreadsheets().values().append(
@@ -110,7 +105,6 @@ def get_access_token(code):
     return response_data["access_token"]
 
 app = Flask(__name__)
-#load_dotenv()
 
 @app.route("/")
 def index():
@@ -126,8 +120,7 @@ def callback():
     code = request.args.get("code")
     if code:
         access_token = get_access_token(code)
-        # Use the access token to make requests to the Spotify API
-        # Implement your logic here
+
         artists = getFollowedArtists(access_token)
         
         update = []
@@ -144,11 +137,9 @@ def callback():
         
         updateGoogleSheet(update)
 
-        #return "Authorization successful! You can close this page."
         return update
     else:
         error = request.args.get("error")
-        # Handle the error case appropriately
         return f"Authorization failed: {error}"
 
 
