@@ -1,8 +1,8 @@
 {
     "redirects": [
       {
-        "source": "/",
-        "destination": "https://m1-p6-s1-data-pipeline.vercel.app/api/main"
+        "source": "/.*",
+        "destination": "/api/main"
       }
     ]
   }
