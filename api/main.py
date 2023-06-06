@@ -5,7 +5,7 @@ import logging
 
 from flask import Flask, request, redirect
 from base64 import b64encode
-
+from threading import Thread
 from google.oauth2 import service_account
 from apiclient import discovery
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -63,11 +63,6 @@ def getFollowedArtists(access_token, after):
 
     artists = []
     artists.extend(result['items'])
-    # while result['next']:
-    #     after = result['next'].split("&after=")[1]
-    #     response = requests.get(f"https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}", headers=headers)
-    #     result = response.json()['artists']
-    #     artists.extend(result['items'])
 
     after = ""
     if result['next']:
@@ -118,6 +113,17 @@ def get_access_token(code):
     response_data = response.json()
     return response_data["access_token"]
 
+def callback_thread(access_token, last_artist_id):
+    if last_artist_id:
+        url = request.host_url.rstrip("/") + "/callback"
+        redirect_url = f"{url}?access_token={access_token}&last_artist_id={last_artist_id}"
+        response = requests.get(redirect_url)
+        # Process the response if needed
+    else:
+        # Handle the case where last_artist_id is not available
+        print("No last artist available")
+
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -155,29 +161,16 @@ def callback():
                 except Exception as e:
                     logging.error(f"Exception occurred: {e}")
 
-        # for artist in artists:
-        #     name = artist["name"].title()
-        #     id = artist["id"]
-        #     albums = getArtistAlbums(access_token, id)
-
-        #     if albums:
-        #         print("=====================\nFound new albums for", name)
-        #         for idx, album in enumerate(albums):
-        #             update.append([name,album["name"],album["release_date"]])
-
         updateGoogleSheet(update)
 
         if after: 
-            # if last_artist_id:
-            #     return str(update)
-            # else:
-            #     url = request.host_url.rstrip("/") + "/callback"
-            #     redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
-            #     return redirect(redirect_url)
+            # url = request.host_url.rstrip("/") + "/callback"
+            # redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
+            # return redirect(redirect_url)
+            # Start the callback thread in the background
+            Thread(target=callback_thread, args=(access_token, after)).start()
 
-            url = request.host_url.rstrip("/") + "/callback"
-            redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
-            return redirect(redirect_url)
+        
         print([artists, update, last_artist_id, after])
         return [artists, update, last_artist_id, after]
     else:
@@ -194,29 +187,3 @@ def process_artist(access_token, artist):
         album_updates = [[name, album["name"], album["release_date"]] for album in albums]
         return album_updates
     return []
-
-# @app.route("/callback")
-# def callback():
-#     code = request.args.get("code")
-#     if code:
-#         access_token = get_access_token(code)
-
-#         artists = getFollowedArtists(access_token)
-        
-#         update = []
-#         for artist in artists:
-#             name = artist["name"].title()
-#             id = artist["id"]
-#             albums = getArtistAlbums(access_token, id)
-
-#             if albums:
-#                 print("=====================\nFound new albums for", name)
-#                 for idx, album in enumerate(albums):
-#                     update.append([name,album["name"],album["release_date"]])
-        
-#         updateGoogleSheet(update)
-
-#         return update
-#     else:
-#         error = request.args.get("error")
-#         return f"Authorization failed: {error}"
