@@ -46,7 +46,7 @@ def updateGoogleSheet(data):
         range=SAMPLE_RANGE_NAME,
         body=dict_me).execute()
 
-    print('Sheet successfully Updated')
+    print('Sheet successfully Updated', len(data))
     return    
 
 def getFollowedArtists(access_token, after):
