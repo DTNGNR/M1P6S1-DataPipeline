@@ -5,7 +5,7 @@ import logging
 
 from flask import Flask, request, redirect
 from base64 import b64encode
-from threading import Thread
+
 from google.oauth2 import service_account
 from apiclient import discovery
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -116,17 +116,6 @@ def get_access_token(code):
     response_data = response.json()
     return response_data["access_token"]
 
-def callback_thread(access_token, last_artist_id):
-    if last_artist_id:
-        url = request.host_url.rstrip("/") + "/callback"
-        redirect_url = f"{url}?access_token={access_token}&last_artist_id={last_artist_id}"
-        response = requests.get(redirect_url)
-        # Process the response if needed
-    else:
-        # Handle the case where last_artist_id is not available
-        print("No last artist available")
-
-
 app = Flask(__name__)
 
 @app.route("/")
@@ -141,14 +130,12 @@ def index():
 @app.route("/callback")
 def callback():
     code = request.args.get("code", None)
-    access_token = request.args.get("access_token", None)
     last_artist_id = request.args.get("last_artist_id", None)
 
-    if code or access_token:
+    if code:
 
-        if not(access_token):
-            access_token = get_access_token(code)
-            logging.debug("=====================\nGot acces token")
+        access_token = get_access_token(code)
+        logging.debug("=====================\nGot acces token")
 
         artists, after = getFollowedArtists(access_token, last_artist_id)
         logging.debug(f"=====================\Found {len(artists)} artists to check")
@@ -165,16 +152,8 @@ def callback():
                     logging.error(f"Exception occurred: {e}")
 
         updateGoogleSheet(update)
-
-        if after: 
-            # url = request.host_url.rstrip("/") + "/callback"
-            # redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
-            # return redirect(redirect_url)
-            # Start the callback thread in the background
-            Thread(target=callback_thread, args=(access_token, after)).start()
-
         
-        print([artists, update, last_artist_id, after])
+        print(after)
         return [artists, update, last_artist_id, after]
     else:
         error = request.args.get("error")
