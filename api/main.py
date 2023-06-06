@@ -165,4 +165,5 @@ class handler(BaseHTTPRequestHandler):
         return
     
 if __name__ == "__main__":
+    print('Run Flask App')
     app.run(port=8000, debug=True)
