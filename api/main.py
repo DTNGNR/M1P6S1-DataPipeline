@@ -13,7 +13,7 @@ SAMPLE_RANGE_NAME = 'A:C'
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
-check_date = current_date - timedelta(days=14)
+check_date = current_date - timedelta(days=8)
 
 def updateGoogleSheet(data):
     dict_me = dict(values=data)
@@ -58,7 +58,6 @@ def getFollowedArtists(access_token):
         response = requests.get(f"https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}", headers=headers)
         result = response.json()['artists']
         artists.extend(result['items'])
-        break
 
     return artists
 
