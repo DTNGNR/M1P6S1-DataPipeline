@@ -1,4 +1,4 @@
-from http.server import BaseHTTPRequestHandler
+#from http.server import BaseHTTPRequestHandler
 import requests
 import os
 
@@ -32,7 +32,6 @@ def updateGoogleSheet(data):
         "client_x509_cert_url": os.environ.get("client_x509_cert_url")
     }
 
-    print(service_account_credentials["private_key"])
     credentials = service_account.Credentials.from_service_account_info(
         service_account_credentials, scopes=SCOPES)
     
@@ -165,6 +164,6 @@ def callback():
 #         print('Sheet successfully updated')
 #         return
     
-if __name__ == "__main__":
-    print('Run Flask App')
-    app.run(port=8000, debug=True)
+# if __name__ == "__main__":
+#     print('Run Flask App')
+#     app.run(port=8000, debug=True)
