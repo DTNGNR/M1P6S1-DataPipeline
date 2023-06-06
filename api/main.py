@@ -1,5 +1,6 @@
 import requests
 import os
+import concurrent.futures
 
 from flask import Flask, request, redirect
 from base64 import b64encode
@@ -120,23 +121,56 @@ def callback():
     code = request.args.get("code")
     if code:
         access_token = get_access_token(code)
-
         artists = getFollowedArtists(access_token)
         
         update = []
-        for artist in artists:
-            name = artist["name"].title()
-            id = artist["id"]
-            albums = getArtistAlbums(access_token, id)
-
-            if albums:
-                print("=====================\nFound new albums for", name)
-                for idx, album in enumerate(albums):
-                    update.append([name,album["name"],album["release_date"]])
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
+            for future in concurrent.futures.as_completed(futures):
+                album_updates = future.result()
+                if album_updates:
+                    update.extend(album_updates)
         
         updateGoogleSheet(update)
-
-        return update
+        
+        return str(update)
     else:
         error = request.args.get("error")
         return f"Authorization failed: {error}"
+
+def process_artist(access_token, artist):
+    name = artist["name"].title()
+    id = artist["id"]
+    albums = getArtistAlbums(access_token, id)
+
+    if albums:
+        print("=====================\nFound new albums for", name)
+        album_updates = [[name, album["name"], album["release_date"]] for album in albums]
+        return album_updates
+    return []
+
+# @app.route("/callback")
+# def callback():
+#     code = request.args.get("code")
+#     if code:
+#         access_token = get_access_token(code)
+
+#         artists = getFollowedArtists(access_token)
+        
+#         update = []
+#         for artist in artists:
+#             name = artist["name"].title()
+#             id = artist["id"]
+#             albums = getArtistAlbums(access_token, id)
+
+#             if albums:
+#                 print("=====================\nFound new albums for", name)
+#                 for idx, album in enumerate(albums):
+#                     update.append([name,album["name"],album["release_date"]])
+        
+#         updateGoogleSheet(update)
+
+#         return update
+#     else:
+#         error = request.args.get("error")
+#         return f"Authorization failed: {error}"
