@@ -82,7 +82,7 @@ def getArtistAlbums(access_token, id):
 
     return albums
     
-def getAuthorization():
+def getAuth():
     client_id = os.getenv("CLIENT_ID")
     client_secret = os.getenv("CLIENT_SECRET")
     return b64encode(f"{client_id}:{client_secret}".encode()).decode(
@@ -94,7 +94,7 @@ def get_access_token(code):
     client_secret = os.getenv("CLIENT_SECRET")
     redirect_uri = os.getenv("REDIRECT_URI")
 
-    headers = {"Authorization": "Basic {}".format(getAuthorization())}
+    headers = {"Authorization": "Basic {}".format(getAuth())}
 
     token_url = "https://accounts.spotify.com/api/token"
     data = {
@@ -125,6 +125,7 @@ def callback():
     if code:
         access_token = get_access_token(code)
         logging.debug("=====================\nGot acces token")
+
         artists = getFollowedArtists(access_token)
         logging.debug(f"=====================\Found {len(artists)} artists to check")
 
