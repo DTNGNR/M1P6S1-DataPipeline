@@ -142,15 +142,25 @@ def callback():
         logging.debug(f"=====================\Found {len(artists)} artists to check")
 
         update = []
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
-            for future in concurrent.futures.as_completed(futures):
-                try:
-                    album_updates = future.result()
-                    if album_updates:
-                        update.extend(album_updates)
-                except Exception as e:
-                    logging.error(f"Exception occurred: {e}")
+        # with concurrent.futures.ThreadPoolExecutor() as executor:
+        #     futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
+        #     for future in concurrent.futures.as_completed(futures):
+        #         try:
+        #             album_updates = future.result()
+        #             if album_updates:
+        #                 update.extend(album_updates)
+        #         except Exception as e:
+        #             logging.error(f"Exception occurred: {e}")
+
+        for artist in artists:
+            name = artist["name"].title()
+            id = artist["id"]
+            albums = getArtistAlbums(access_token, id)
+
+            if albums:
+                print("=====================\nFound new albums for", name)
+                for idx, album in enumerate(albums):
+                    update.append([name,album["name"],album["release_date"]])
 
         updateGoogleSheet(update)
 
