@@ -49,10 +49,29 @@ def updateGoogleSheet(data):
     print('Sheet successfully Updated')
     return    
 
+LAST_ARTIST_ID_FILE = "last_artist_id.txt"
+
+def read_last_artist_id():
+    with open(LAST_ARTIST_ID_FILE, "r") as file:
+        return file.read().strip()
+
+def write_last_artist_id(artist_id):
+    with open(LAST_ARTIST_ID_FILE, "w") as file:
+        file.write(artist_id)
+
+
 def getFollowedArtists(access_token):
 
+    last_artist_id = read_last_artist_id()
+    if len(last_artist_id) > 10:
+        logging.debug(f"Last artist ID from file: {last_artist_id}")
+        url = "https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}"
+    else:
+        url = "https://api.spotify.com/v1/me/following?type=artist&limit=50"
+
+
     headers = { "Authorization": "Bearer {}".format(access_token)}
-    response = requests.get("https://api.spotify.com/v1/me/following?type=artist&limit=50", headers=headers)
+    response = requests.get(url, headers=headers)
     result = response.json()['artists']
 
     artists = []
@@ -62,6 +81,13 @@ def getFollowedArtists(access_token):
     #     response = requests.get(f"https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}", headers=headers)
     #     result = response.json()['artists']
     #     artists.extend(result['items'])
+
+    # Store the last artist's ID in the file
+    if len(artists) > 1:
+        last_artist_id = artists[-1]['id']
+    else:
+        last_artist_id = ""
+    write_last_artist_id(last_artist_id)
 
     return artists
 
