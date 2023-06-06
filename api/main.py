@@ -168,13 +168,17 @@ def callback():
         updateGoogleSheet(update)
 
         if after: 
-            if last_artist_id:
-                return str(update)
-            else:
-                url = request.host_url.rstrip("/") + "/callback"
-                redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
-                return redirect(redirect_url)
+            # if last_artist_id:
+            #     return str(update)
+            # else:
+            #     url = request.host_url.rstrip("/") + "/callback"
+            #     redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
+            #     return redirect(redirect_url)
 
+            url = request.host_url.rstrip("/") + "/callback"
+            redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
+            return redirect(redirect_url)
+        
         return [artists, update, last_artist_id, after]
     else:
         error = request.args.get("error")
