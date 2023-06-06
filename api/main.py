@@ -66,25 +66,25 @@ def callback():
 def updateGoogleSheet(data):
     dict_me = dict(values=data)
 
-    # service_account_credentials = {
-    #     "type": os.environ.get("type"),
-    #     "project_id": os.environ.get("project_id"),
-    #     "private_key_id": os.environ.get("private_key_id"),
-    #     "private_key": os.environ.get("private_key"),
-    #     "client_email": os.environ.get("client_email"),
-    #     "client_id": os.environ.get("client_id"),
-    #     "auth_uri": os.environ.get("auth_uri"),
-    #     "token_uri": os.environ.get("token_uri"),
-    #     "auth_provider_x509_cert_url": os.environ.get("auth_provider_x509_cert_url"),
-    #     "client_x509_cert_url": os.environ.get("client_x509_cert_url")
-    # }
+    service_account_credentials = {
+        "type": os.environ.get("type"),
+        "project_id": os.environ.get("project_id"),
+        "private_key_id": os.environ.get("private_key_id"),
+        "private_key": os.environ.get("private_key"),
+        "client_email": os.environ.get("client_email"),
+        "client_id": os.environ.get("client_id"),
+        "auth_uri": os.environ.get("auth_uri"),
+        "token_uri": os.environ.get("token_uri"),
+        "auth_provider_x509_cert_url": os.environ.get("auth_provider_x509_cert_url"),
+        "client_x509_cert_url": os.environ.get("client_x509_cert_url")
+    }
 
-    # print(service_account_credentials["private_key"])
-    # credentials = service_account.Credentials.from_service_account_info(
-    #     service_account_credentials, scopes=SCOPES)
+    print(service_account_credentials["private_key"])
+    credentials = service_account.Credentials.from_service_account_info(
+        service_account_credentials, scopes=SCOPES)
     
-    credentials = service_account.Credentials.from_service_account_file(
-        "spotify-new-releases-388907-3a50d5a91da5.json", scopes=SCOPES)
+    # credentials = service_account.Credentials.from_service_account_file(
+    #     "spotify-new-releases-388907-3a50d5a91da5.json", scopes=SCOPES)
 
     service = discovery.build('sheets', 'v4', credentials=credentials)
 
