@@ -1,6 +1,7 @@
 import requests
 import os
 import concurrent.futures
+import logging
 
 from flask import Flask, request, redirect
 from base64 import b64encode
@@ -10,6 +11,9 @@ from apiclient import discovery
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 SAMPLE_SPREADSHEET_ID = '1JOSHfmHUWOorpyoWBn0m0Zacrd3xxy5XZdFZFSUJVvs'
 SAMPLE_RANGE_NAME = 'A:C'
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
@@ -120,18 +124,23 @@ def callback():
     code = request.args.get("code")
     if code:
         access_token = get_access_token(code)
+        logging.debug("=====================\nGot acces token")
         artists = getFollowedArtists(access_token)
-        
+        logging.debug(f"=====================\Found {len(artists)} artists to check")
+
         update = []
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
             for future in concurrent.futures.as_completed(futures):
-                album_updates = future.result()
-                if album_updates:
-                    update.extend(album_updates)
-        
+                try:
+                    album_updates = future.result()
+                    if album_updates:
+                        update.extend(album_updates)
+                except Exception as e:
+                    logging.error(f"Exception occurred: {e}")
+
         updateGoogleSheet(update)
-        
+
         return str(update)
     else:
         error = request.args.get("error")
@@ -143,7 +152,7 @@ def process_artist(access_token, artist):
     albums = getArtistAlbums(access_token, id)
 
     if albums:
-        print("=====================\nFound new albums for", name)
+        logging.debug("=====================\nFound new albums for %s", name)
         album_updates = [[name, album["name"], album["release_date"]] for album in albums]
         return album_updates
     return []
