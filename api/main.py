@@ -16,48 +16,6 @@ from datetime import datetime, timedelta
 current_date = datetime.now()
 check_date = current_date - timedelta(days=7000)
 
-app = Flask(__name__)
-#load_dotenv()
-
-@app.route("/")
-def index():
-    client_id = os.getenv("CLIENT_ID")
-    redirect_uri = os.getenv("REDIRECT_URI")
-    scope = "user-follow-read"  # Add any additional scopes you need
-
-    authorize_url = f"https://accounts.spotify.com/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}&scope={scope}"
-    return redirect(authorize_url)
-
-@app.route("/callback")
-def callback():
-    code = request.args.get("code")
-    if code:
-        access_token = get_access_token(code)
-        # Use the access token to make requests to the Spotify API
-        # Implement your logic here
-        artists = getFollowedArtists(access_token)
-        
-        update = []
-        for artist in artists:
-            name = artist["name"].title()
-            id = artist["id"]
-            albums = getArtistAlbums(access_token, id)
-
-            if albums:
-                print("=====================\nFound new albums for", name)
-                for idx, album in enumerate(albums):
-                    update.append([name,album["name"],album["release_date"]])
-            break
-        
-        updateGoogleSheet(update)
-
-        #return "Authorization successful! You can close this page."
-        return update
-    else:
-        error = request.args.get("error")
-        # Handle the error case appropriately
-        return f"Authorization failed: {error}"
-
 def updateGoogleSheet(data):
     dict_me = dict(values=data)
 
@@ -151,6 +109,49 @@ def get_access_token(code):
     response = requests.post(token_url, data=data, headers=headers)
     response_data = response.json()
     return response_data["access_token"]
+
+app = Flask(__name__)
+#load_dotenv()
+
+@app.route("/")
+def index():
+    client_id = os.getenv("CLIENT_ID")
+    redirect_uri = os.getenv("REDIRECT_URI")
+    scope = "user-follow-read"  # Add any additional scopes you need
+
+    authorize_url = f"https://accounts.spotify.com/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}&scope={scope}"
+    return redirect(authorize_url)
+
+@app.route("/callback")
+def callback():
+    code = request.args.get("code")
+    if code:
+        access_token = get_access_token(code)
+        # Use the access token to make requests to the Spotify API
+        # Implement your logic here
+        artists = getFollowedArtists(access_token)
+        
+        update = []
+        for artist in artists:
+            name = artist["name"].title()
+            id = artist["id"]
+            albums = getArtistAlbums(access_token, id)
+
+            if albums:
+                print("=====================\nFound new albums for", name)
+                for idx, album in enumerate(albums):
+                    update.append([name,album["name"],album["release_date"]])
+            break
+        
+        updateGoogleSheet(update)
+
+        #return "Authorization successful! You can close this page."
+        return update
+    else:
+        error = request.args.get("error")
+        # Handle the error case appropriately
+        return f"Authorization failed: {error}"
+
 
 # class handler(BaseHTTPRequestHandler):
 #     def do_GET(self):
