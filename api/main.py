@@ -12,7 +12,7 @@ SAMPLE_RANGE_NAME = 'A:C'
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
-check_date = current_date - timedelta(days=7000)
+check_date = current_date - timedelta(days=8)
 
 def updateGoogleSheet(data):
     dict_me = dict(values=data)
@@ -133,7 +133,6 @@ def callback():
                 print("=====================\nFound new albums for", name)
                 for idx, album in enumerate(albums):
                     update.append([name,album["name"],album["release_date"]])
-            break
         
         updateGoogleSheet(update)
 
@@ -141,20 +140,3 @@ def callback():
     else:
         error = request.args.get("error")
         return f"Authorization failed: {error}"
-
-
-# class handler(BaseHTTPRequestHandler):
-#     def do_GET(self):
-#         s = self.path
-#         self.send_response(200)
-#         self.send_header('Content-type', 'text/plain')
-#         self.end_headers()
-
-#         # app.run(port=8000, debug=True)
-
-#         print('Sheet successfully updated')
-#         return
-    
-# if __name__ == "__main__":
-#     print('Run Flask App')
-#     app.run(port=8000, debug=True)
