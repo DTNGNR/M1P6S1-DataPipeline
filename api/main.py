@@ -155,13 +155,13 @@ def callback():
 
         updateGoogleSheet(update)
 
-        if (after) & (last_artist_id):
-            return str(update)
-
-        elif after:
-            url = request.host_url.rstrip("/") + "/callback"
-            redirect_url = f"{url}?code={code}&last_artist_id={after}"
-            return redirect(redirect_url)
+        if after: 
+            if last_artist_id:
+                return str(update)
+            else:
+                url = request.host_url.rstrip("/") + "/callback"
+                redirect_url = f"{url}?code={code}&last_artist_id={after}"
+                return redirect(redirect_url)
 
         return str(update)
     else:
