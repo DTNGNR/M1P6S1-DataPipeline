@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
-check_date = current_date - timedelta(days=8000)
+check_date = current_date - timedelta(days=80)
 
 def updateGoogleSheet(data):
     dict_me = dict(values=data)
