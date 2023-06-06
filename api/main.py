@@ -15,7 +15,6 @@ SAMPLE_RANGE_NAME = 'A:C'
 # Set up logging
 #logging.basicConfig(level=logging.INFO)
 logging.basicConfig(level=logging.DEBUG, handlers=[
-    logging.FileHandler('logfile.log'),
     logging.StreamHandler()
 ])
 
