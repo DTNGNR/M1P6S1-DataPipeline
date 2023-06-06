@@ -143,8 +143,7 @@ def callback():
 
         update = []
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            artist_albums = [(access_token, artist) for artist in artists]
-            futures = [executor.submit(process_artist, *args) for args in artist_albums]
+            futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
             for future in concurrent.futures.as_completed(futures):
                 try:
                     album_updates = future.result()
