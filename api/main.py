@@ -154,7 +154,7 @@ def callback():
         updateGoogleSheet(update)
         
         print(after)
-        return [artists, update, last_artist_id, after]
+        return [after]
     else:
         error = request.args.get("error")
         return f"Authorization failed: {error}"
