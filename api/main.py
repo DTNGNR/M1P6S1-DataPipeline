@@ -172,7 +172,7 @@ def callback():
                 redirect_url = f"{url}?code={code}&last_artist_id={after}"
                 return redirect(redirect_url)
 
-        return str(update)
+        return artists, update, last_artist_id, after
     else:
         error = request.args.get("error")
         return f"Authorization failed: {error}"
