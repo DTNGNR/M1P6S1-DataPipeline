@@ -161,7 +161,7 @@ class handler(BaseHTTPRequestHandler):
 
         # app.run(port=8000, debug=True)
 
-        print('Sheet successfully Updated')
+        print('Sheet successfully updated')
         return
     
 if __name__ == "__main__":
