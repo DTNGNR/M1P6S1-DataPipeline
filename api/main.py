@@ -49,7 +49,7 @@ def updateGoogleSheet(data):
     print('Sheet successfully Updated')
     return    
 
-LAST_ARTIST_ID_FILE = "last_artist_id.txt"
+LAST_ARTIST_ID_FILE = "api/last_artist_id.txt"
 
 def read_last_artist_id():
     with open(LAST_ARTIST_ID_FILE, "r") as file:
