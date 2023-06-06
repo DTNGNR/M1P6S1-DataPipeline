@@ -57,11 +57,11 @@ def getFollowedArtists(access_token):
 
     artists = []
     artists.extend(result['items'])
-    while result['next']:
-        after = result['next'].split("&after=")[1]
-        response = requests.get(f"https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}", headers=headers)
-        result = response.json()['artists']
-        artists.extend(result['items'])
+    # while result['next']:
+    #     after = result['next'].split("&after=")[1]
+    #     response = requests.get(f"https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}", headers=headers)
+    #     result = response.json()['artists']
+    #     artists.extend(result['items'])
 
     return artists
 
@@ -140,20 +140,6 @@ def callback():
                         update.extend(album_updates)
                 except Exception as e:
                     logging.error(f"Exception occurred: {e}")
-
-
-
-
-        # update = []
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
-        #     futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
-        #     for future in concurrent.futures.as_completed(futures):
-        #         try:
-        #             album_updates = future.result()
-        #             if album_updates:
-        #                 update.extend(album_updates)
-        #         except Exception as e:
-        #             logging.error(f"Exception occurred: {e}")
 
         updateGoogleSheet(update)
 
