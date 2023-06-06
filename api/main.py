@@ -131,12 +131,15 @@ def index():
 
 @app.route("/callback")
 def callback():
-    code = request.args.get("code")
+    code = request.args.get("code", None)
+    access_token = request.args.get("access_token", None)
     last_artist_id = request.args.get("last_artist_id", None)
 
-    if code:
-        access_token = get_access_token(code)
-        logging.debug("=====================\nGot acces token")
+    if code or access_token:
+
+        if not(access_token):
+            access_token = get_access_token(code)
+            logging.debug("=====================\nGot acces token")
 
         artists, after = getFollowedArtists(access_token, last_artist_id)
         logging.debug(f"=====================\Found {len(artists)} artists to check")
@@ -169,7 +172,7 @@ def callback():
                 return str(update)
             else:
                 url = request.host_url.rstrip("/") + "/callback"
-                redirect_url = f"{url}?code={code}&last_artist_id={after}"
+                redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
                 return redirect(redirect_url)
 
         return [artists, update, last_artist_id, after]
