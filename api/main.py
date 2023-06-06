@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 
 from datetime import datetime, timedelta
 current_date = datetime.now()
-check_date = current_date - timedelta(days=8)
+check_date = current_date - timedelta(days=8000)
 
 def updateGoogleSheet(data):
     dict_me = dict(values=data)
@@ -49,28 +49,15 @@ def updateGoogleSheet(data):
     print('Sheet successfully Updated')
     return    
 
-LAST_ARTIST_ID_FILE = "api/last_artist_id.txt"
-
-def read_last_artist_id():
-    with open(LAST_ARTIST_ID_FILE, "r") as file:
-        return file.read().strip()
-
-def write_last_artist_id(artist_id):
-    with open(LAST_ARTIST_ID_FILE, "w") as file:
-        file.write(artist_id)
-
-
-def getFollowedArtists(access_token):
-
-    last_artist_id = read_last_artist_id()
-    if len(last_artist_id) > 10:
-        logging.debug(f"Last artist ID from file: {last_artist_id}")
-        url = "https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}"
-    else:
-        url = "https://api.spotify.com/v1/me/following?type=artist&limit=50"
-
+def getFollowedArtists(access_token, after):
 
     headers = { "Authorization": "Bearer {}".format(access_token)}
+
+    if after:
+        url = "https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}"
+    else:
+        url = "https://api.spotify.com/v1/me/following?type=artist&limit=50&after={after}"
+
     response = requests.get(url, headers=headers)
     result = response.json()['artists']
 
@@ -82,14 +69,11 @@ def getFollowedArtists(access_token):
     #     result = response.json()['artists']
     #     artists.extend(result['items'])
 
-    # Store the last artist's ID in the file
-    if len(artists) > 1:
-        last_artist_id = artists[-1]['id']
-    else:
-        last_artist_id = ""
-    write_last_artist_id(last_artist_id)
+    after = ""
+    if result['next']:
+        after = result['next'].split("&after=")[1]
 
-    return artists
+    return artists, after
 
 def getArtistAlbums(access_token, id):
     headers = { "Authorization": "Bearer {}".format(access_token)}
@@ -148,11 +132,13 @@ def index():
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
+    last_artist_id = request.args.get("last_artist_id", None)
+
     if code:
         access_token = get_access_token(code)
         logging.debug("=====================\nGot acces token")
 
-        artists = getFollowedArtists(access_token)
+        artists, after = getFollowedArtists(access_token, last_artist_id)
         logging.debug(f"=====================\Found {len(artists)} artists to check")
 
         update = []
@@ -168,6 +154,14 @@ def callback():
                     logging.error(f"Exception occurred: {e}")
 
         updateGoogleSheet(update)
+
+        if after & last_artist_id:
+            return str(update)
+
+        elif after:
+            url = request.host_url.rstrip("/") + "/callback"
+            redirect_url = f"{url}?code={code}&last_artist_id={after}"
+            return redirect(redirect_url)
 
         return str(update)
     else:
