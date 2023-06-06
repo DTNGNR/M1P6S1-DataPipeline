@@ -155,7 +155,7 @@ def callback():
 
         updateGoogleSheet(update)
 
-        if after & last_artist_id:
+        if (after) & (last_artist_id):
             return str(update)
 
         elif after:
