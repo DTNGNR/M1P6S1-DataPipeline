@@ -178,7 +178,7 @@ def callback():
             url = request.host_url.rstrip("/") + "/callback"
             redirect_url = f"{url}?access_token={access_token}&last_artist_id={after}"
             return redirect(redirect_url)
-        
+        print([artists, update, last_artist_id, after])
         return [artists, update, last_artist_id, after]
     else:
         error = request.args.get("error")
