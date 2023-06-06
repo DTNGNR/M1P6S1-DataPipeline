@@ -152,17 +152,17 @@ def get_access_token(code):
     response_data = response.json()
     return response_data["access_token"]
 
-# class handler(BaseHTTPRequestHandler):
-#     def do_GET(self):
-#         s = self.path
-#         self.send_response(200)
-#         self.send_header('Content-type', 'text/plain')
-#         self.end_headers()
+class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        s = self.path
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
 
-#         app.run(port=8000, debug=True)
+        # app.run(port=8000, debug=True)
 
-#         print('Sheet successfully Updated')
-#         return
+        print('Sheet successfully Updated')
+        return
     
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
