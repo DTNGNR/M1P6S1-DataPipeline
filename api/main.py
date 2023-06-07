@@ -62,6 +62,7 @@ def getFollowedArtists(access_token, after):
         url = "https://api.spotify.com/v1/me/following?type=artist&limit=50"
 
     response = requests.get(url, headers=headers)
+    return response.json()
     result = response.json()['artists']
 
     artists = []
