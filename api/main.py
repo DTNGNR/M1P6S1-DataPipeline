@@ -62,7 +62,6 @@ def getFollowedArtists(access_token, after):
         url = "https://api.spotify.com/v1/me/following?type=artist&limit=50"
 
     response = requests.get(url, headers=headers)
-    return response.json(), ""
     result = response.json()['artists']
 
     artists = []
@@ -121,33 +120,44 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    last_artist_id = request.args.get("last_artist_id", None)
     client_id = os.getenv("CLIENT_ID")
     redirect_uri = os.getenv("REDIRECT_URI")
     scope = "user-follow-read"  # Add any additional scopes you need
 
     authorize_url = f"https://accounts.spotify.com/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}&scope={scope}"
-    access_token = redirect(authorize_url)
+    return redirect(authorize_url)
 
-    artists, after = getFollowedArtists(access_token, last_artist_id)
-    logging.debug(f"=====================\Found {len(artists)} artists to check")
-    return(artists)
+@app.route("/callback")
+def callback():
+    code = request.args.get("code", None)
+    last_artist_id = request.args.get("last_artist_id", None)
 
-    update = []
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                album_updates = future.result()
-                if album_updates:
-                    update.extend(album_updates)
-            except Exception as e:
-                logging.error(f"Exception occurred: {e}")
+    if code:
 
-    updateGoogleSheet(update)
-    
-    print(after)
-    return after
+        access_token = get_access_token(code)
+        logging.debug("=====================\nGot acces token")
+
+        artists, after = getFollowedArtists(access_token, last_artist_id)
+        logging.debug(f"=====================\Found {len(artists)} artists to check")
+
+        update = []
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = [executor.submit(process_artist, access_token, artist) for artist in artists]
+            for future in concurrent.futures.as_completed(futures):
+                try:
+                    album_updates = future.result()
+                    if album_updates:
+                        update.extend(album_updates)
+                except Exception as e:
+                    logging.error(f"Exception occurred: {e}")
+
+        updateGoogleSheet(update)
+        
+        print(after)
+        return after
+    else:
+        error = request.args.get("error")
+        return f"Authorization failed: {error}"
 
 def process_artist(access_token, artist):
     name = artist["name"].title()
@@ -159,18 +169,3 @@ def process_artist(access_token, artist):
         album_updates = [[name, album["name"], album["release_date"]] for album in albums]
         return album_updates
     return []
-
-@app.route("/callback")
-def callback():
-    code = request.args.get("code", None)
-
-    if code:
-    
-        access_token = get_access_token(code)
-        logging.debug("=====================\nGot acces token")
-        return(access_token)
-        return code
-
-    else:
-        error = request.args.get("error")
-        return f"Authorization failed: {error}"
