@@ -150,17 +150,6 @@ def index():
     print(after)
     return after
 
-@app.route("/callback")
-def callback():
-    code = request.args.get("code", None)
-
-    if code:
-        return code
-
-    else:
-        error = request.args.get("error")
-        return f"Authorization failed: {error}"
-
 def process_artist(access_token, artist):
     name = artist["name"].title()
     id = artist["id"]
@@ -171,3 +160,14 @@ def process_artist(access_token, artist):
         album_updates = [[name, album["name"], album["release_date"]] for album in albums]
         return album_updates
     return []
+
+@app.route("/callback")
+def callback():
+    code = request.args.get("code", None)
+
+    if code:
+        return code
+
+    else:
+        error = request.args.get("error")
+        return f"Authorization failed: {error}"
