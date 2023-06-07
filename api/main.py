@@ -126,11 +126,8 @@ def index():
     scope = "user-follow-read"  # Add any additional scopes you need
 
     authorize_url = f"https://accounts.spotify.com/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}&scope={scope}"
-    code = redirect(authorize_url)
+    access_token = redirect(authorize_url)
 
-    access_token = get_access_token(code)
-    logging.debug("=====================\nGot acces token")
-    return(access_token)
     artists, after = getFollowedArtists(access_token, last_artist_id)
     logging.debug(f"=====================\Found {len(artists)} artists to check")
 
@@ -166,6 +163,10 @@ def callback():
     code = request.args.get("code", None)
 
     if code:
+    
+        access_token = get_access_token(code)
+        logging.debug("=====================\nGot acces token")
+        return(access_token)
         return code
 
     else:
