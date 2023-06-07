@@ -62,7 +62,7 @@ def getFollowedArtists(access_token, after):
         url = "https://api.spotify.com/v1/me/following?type=artist&limit=50"
 
     response = requests.get(url, headers=headers)
-    return response.json()
+    return response.json(), ""
     result = response.json()['artists']
 
     artists = []
@@ -131,6 +131,7 @@ def index():
 
     artists, after = getFollowedArtists(access_token, last_artist_id)
     logging.debug(f"=====================\Found {len(artists)} artists to check")
+    return(artists)
 
     update = []
     with concurrent.futures.ThreadPoolExecutor() as executor:
